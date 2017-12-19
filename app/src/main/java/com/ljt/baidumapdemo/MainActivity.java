@@ -11,7 +11,7 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
-
+    public static String TAG=MainActivity .class.getSimpleName();
     LocationHelper locateHelper;
     TextView textView;
     private LocationHelper.LocationListener mLocationListener;
@@ -23,28 +23,29 @@ public class MainActivity extends AppCompatActivity {
 
 
         textView = (TextView) findViewById(R.id.text);
-        locateHelper = new LocationHelper.Builder(getApplicationContext())
+        locateHelper=new LocationHelper.Builder(getApplicationContext())
                 .setScanSpan(0)
                 .setIsNeedLocationDescribe(true).build();
-        mLocationListener = new LocationHelper.LocationListener() {
+
+        mLocationListener=new LocationHelper.LocationListener() {
             @Override
             public void onReceiveLocation(LocationHelper.LocationEntity location) {
-                System.out.println(location);
-                textView.setText(location.toString());
+                System.out.println("location= "+location.toString());
             }
 
             @Override
             public void onError(Throwable e) {
-                System.out.println(" throwable " + e);
-                textView.setText(e.getMessage());
+                super.onError(e);
             }
         };
         locateHelper.registerLocationListener(mLocationListener);
+
         RxPermissions rxPermissions = new RxPermissions(this);
         rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean aBoolean) {
+                        Log.d(TAG,TAG+" ----->>>call ");
                         if (aBoolean) {
                             locateHelper.start();
                         } else {
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(TAG,TAG+" ----->>>onStop ");
         locateHelper.unRegisterLocationListener(mLocationListener);
         locateHelper.stop();
     }

@@ -14,39 +14,34 @@ public class BDLocationService {
     private LocationClient mClient;
     private LocationClientOption mOption;
 
-    private volatile static BDLocationService sInstance;
+    private volatile  static BDLocationService mInstance;
 
-    private BDLocationService(Context context) {
-        mClient = new LocationClient(context);
+    private BDLocationService(Context context){
+        mClient=new LocationClient(context);
         mClient.setLocOption(getDefaultLocationClientOption());
     }
 
-    /**
-     * @param context  applicationContext
-     * @return
-     */
-    public static BDLocationService getSingleton(Context context) {
-        if (sInstance == null) {
-            synchronized (BDLocationService.class) {
-                if (sInstance == null) {
-                    sInstance = new BDLocationService(context);
+    public static BDLocationService getSingleton(Context context){
+        if(mInstance==null){
+            synchronized (BDLocationService.class){
+                if(mInstance==null){
+                    mInstance=new BDLocationService(context);
                 }
             }
         }
-        return sInstance;
+        return mInstance;
     }
 
     public boolean registerLocationListener(BDLocationListener listener){
-        boolean isSuccess = false;
-        if(listener != null){
+        boolean isSuccess=false;
+        if(listener !=null){
             mClient.registerLocationListener(listener);
-            isSuccess = true;
+            isSuccess=true;
         }
-        return  isSuccess;
+        return isSuccess;
     }
-
     public void unRegisterLocationListener(BDLocationListener listener){
-        if(listener != null){
+        if(listener!=null){
             mClient.unRegisterLocationListener(listener);
         }
     }
@@ -69,25 +64,8 @@ public class BDLocationService {
         }
     }
 
-    /***
-     *
-     * @param option
-     * @return isSuccessSetOption
-     */
-    public boolean setLocationOption(LocationClientOption option){
-        boolean isSuccess = false;
-        if(option != null){
-            if(mClient.isStarted())
-                mClient.stop();
-            mOption = option;
-            mClient.setLocOption(option);
-            isSuccess = true;
-        }
-        return isSuccess;
-    }
 
-
-    public LocationClientOption getDefaultLocationClientOption(){
+    public LocationClientOption getDefaultLocationClientOption() {
         if(mOption == null){
             mOption = new LocationClientOption();
             mOption.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);//可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
